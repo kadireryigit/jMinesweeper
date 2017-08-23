@@ -1,5 +1,7 @@
 package jMinesweeper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 
 public class FieldControl extends Observable{
@@ -14,16 +16,27 @@ public class FieldControl extends Observable{
 	private boolean isBorder;
 	private int x,y;
 	private Number num;
-	
+	private List<FieldListener> listeners;
 	
 	//TODO Split this into inner class FieldState
-	public FieldControl(int x, int y){
+	public FieldControl(int x, int y,FieldListener mineField){
 		this.x = x;
 		this.y = y;
 		this.reset();
-		
+		this.listeners = new ArrayList<FieldListener>();
+		if(mineField!=null)listeners.add(mineField);
 	}
 	
+	public void addListener(FieldListener mineField){
+		listeners.add(mineField);
+	}
+	public void removeListener(FieldListener mineField){
+		listeners.remove(mineField);
+	}
+	public void fireEvent(){
+		for(FieldListener listener : listeners)
+			listener.fieldExploded(new FieldEvent(this));
+	}
 	public int getX(){
 		return x;
 	}
@@ -126,8 +139,10 @@ public class FieldControl extends Observable{
 		this.isMine = true;
 	}
 	
-	public boolean fullPress(){
+	public boolean fullPress(boolean fireEvent){
 		if(!flagSet && !isFullPressed){
+			if(fireEvent & isMine)
+				fireEvent();
 			isFullPressed = true;
 			isHalfPressed = false;
 			numVisible = true;

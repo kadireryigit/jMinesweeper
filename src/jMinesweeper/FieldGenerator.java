@@ -26,8 +26,8 @@ public class FieldGenerator {
 				while(nrMines>0){
 					int x,y;
 					do{
-						x = (int) (Math.random()*(width-1))+1;
-						y = (int) (Math.random()*(height-1))+1;
+						x = (int) (Math.random()*(width))+1;
+						y = (int) (Math.random()*(height))+1;
 					}while(field[x][y]==MINE_BLOCK);
 					field[x][y] = MINE_BLOCK;
 					nrMines--;

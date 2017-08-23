@@ -30,10 +30,8 @@ public class MineField extends JPanel implements Observer{
 	public final static int outdentX = 0, outdentY = 0;
 	
 	private int fieldWidth, fieldHeight;
-//	private FieldDrawer fields[][];
-//	private FieldControl fieldC[][];
 	private MineFieldControl mineC;
-	private Timer time;
+	
 	private TimerDrawer timeDraw;
 	private MineFieldState fieldState;
 	
@@ -42,14 +40,13 @@ public class MineField extends JPanel implements Observer{
 		
 		this.mineC = new MineFieldControl(width,height,this);
 		this.fieldState = mineC.getState();
+//		this.time = new Timer();
 		setDimensions(width,height);
 			
 		this.addMouseListener(mineC); 
 		this.addMouseMotionListener(mineC);
 		
-		this.time = new Timer();
-		this.timeDraw = new TimerDrawer(10,20,time,g2,this);
-		this.time.addObserver(timeDraw);
+		this.timeDraw = new TimerDrawer(10,20,mineC.getTimer(),g2,this);
 		
 		
 	}
@@ -94,10 +91,6 @@ public class MineField extends JPanel implements Observer{
 	@Override
 	public void update(Observable obs, Object obj) {
 		this.repaint();
-		if(fieldState.hasStarted())
-			time.startTimer();
-		if(fieldState.hasLost())
-			time.stopTimer();
 	}
 	
 	

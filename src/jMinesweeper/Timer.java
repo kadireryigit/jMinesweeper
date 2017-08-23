@@ -10,11 +10,11 @@ public class Timer extends Observable implements Runnable{
 	private boolean run = false;
 	private boolean init = true;
 	private Thread TimerThread = null;
+	private boolean hasObserver;
 	
 	public Timer(){
 		TimerThread = new Thread(this);
 		TimerThread.setDaemon(true);
-		
 	}
 	
 	@Override
@@ -27,26 +27,29 @@ public class Timer extends Observable implements Runnable{
 						init = false;
 					}
 					count = System.currentTimeMillis()-timeZero;
-//					System.out.println("passed time: " + count);	
-					this.setChanged();
-					this.notifyObservers();
+//					System.out.println("passed time: " + count);
+					int sleeptime = (int) (1000-(count%1000));
+					
+						this.setChanged();
+						this.notifyObservers();
+					
 					try {	
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {}
+						Thread.sleep(sleeptime);
+					} catch (InterruptedException e) {/*System.out.println("one int");*/}
 		
 				}else{
 					if(!init){
 						count = System.currentTimeMillis()-timeZero;
 //						System.out.println("End time: " + count);	
-						this.setChanged();
-						this.notifyObservers();
+						
 					}
-					init = true;
+					this.setChanged();
+					this.notifyObservers();
 					try {
 						while(!Thread.interrupted()){
 							Thread.sleep(10000);//Nop Loop
 						}
-					} catch (InterruptedException e) {}
+					} catch (InterruptedException e) {/*System.out.println("two int");*/}
 					
 				}
 				
@@ -62,10 +65,13 @@ public class Timer extends Observable implements Runnable{
 	public void startTimer(){
 		
 		if(!this.run){
-			if(!TimerThread.isAlive())TimerThread.start();
+			
 			System.out.println("Timer started");
 			this.run = true;
-			TimerThread.interrupt();
+			if(!TimerThread.isAlive())
+				TimerThread.start();
+			else
+				TimerThread.interrupt();
 		}	
 		
 		
@@ -81,8 +87,11 @@ public class Timer extends Observable implements Runnable{
 	}
 	
 	public void reset(){
-		System.out.println("Timer reset");
 		this.init = true;
+		System.out.println("Timer reset");
+		this.run = false;
+		count = 0;
+		TimerThread.interrupt();
 	}
 	
 	
@@ -98,5 +107,5 @@ public class Timer extends Observable implements Runnable{
 		t.stopTimer();
 		
 	}
-	
+
 }

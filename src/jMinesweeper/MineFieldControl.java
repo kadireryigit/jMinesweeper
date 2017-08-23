@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public class MineFieldControl extends Observable implements MouseListener,MouseMotionListener {
+public class MineFieldControl extends Observable implements MouseListener,MouseMotionListener,FieldListener {
 
 	
 	private int[][] fieldNums;
@@ -26,7 +26,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 	 */
 	private boolean clickReset = true;
 	
-	
+	private Timer timer;
 	private boolean init = true;
 	private int fieldWidth, fieldHeight;
 	private int mines = 99;
@@ -37,6 +37,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 	
 	public MineFieldControl(int width, int height, Observer obs){
 		fieldGen = new FieldGenerator();
+		this.timer = new Timer();
 		this.obs = obs;
 		this.addObserver(obs);
 		this.fieldWidth = width;
@@ -50,7 +51,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 			halfPressed = field;
 		}
 		else
-			field.fullPress();
+			field.fullPress(true);
 	}
 	
 	public void middlePressOnField(FieldControl field){
@@ -177,6 +178,8 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 				fieldC[i+1][j+1].reset();
 			}
 		init = true;
+		fieldState.reset();
+		timer.reset();
 		drawField();
 	}
 	
@@ -215,7 +218,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 		neighbors.add(field);
 		int x = field.getX()+1;
 		int y = field.getY()+1;
-		field.fullPress();
+		field.fullPress(true);
 		
 		//TODO optimize this
 		while(neighbors.size()>0){
@@ -227,49 +230,49 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 				y = curField.getY()+1;
 				//top left
 				if(!fieldC[x-1][y-1].isPressed() && fieldC[x-1][y-1].isNumber()){
-						fieldC[x-1][y-1].fullPress();
+						fieldC[x-1][y-1].fullPress(true);
 						if(fieldC[x-1][y-1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x-1][y-1]);
 				}
 				//top
 				if(!fieldC[x][y-1].isPressed() && fieldC[x][y-1].isNumber()){
-						fieldC[x][y-1].fullPress();
+						fieldC[x][y-1].fullPress(true);
 						if(fieldC[x][y-1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x][y-1]);
 				}
 				//top right
 				if(!fieldC[x+1][y-1].isPressed() && fieldC[x+1][y-1].isNumber()){
-						fieldC[x+1][y-1].fullPress();
+						fieldC[x+1][y-1].fullPress(true);
 						if(fieldC[x+1][y-1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x+1][y-1]);
 				}
 				//left
 				if(!fieldC[x-1][y].isPressed() && fieldC[x-1][y].isNumber()){
-						fieldC[x-1][y].fullPress();
+						fieldC[x-1][y].fullPress(true);
 						if(fieldC[x-1][y].getNum().ordinal()==0)
 							neighbors.add(fieldC[x-1][y]);
 				}
 				//right
 				if(!fieldC[x+1][y].isPressed() && fieldC[x+1][y].isNumber()){
-						fieldC[x+1][y].fullPress();
+						fieldC[x+1][y].fullPress(true);
 						if(fieldC[x+1][y].getNum().ordinal()==0)
 							neighbors.add(fieldC[x+1][y]);
 				}
 				//bottom left
 				if(!fieldC[x-1][y+1].isPressed() && fieldC[x-1][y+1].isNumber()){
-						fieldC[x-1][y+1].fullPress();
+						fieldC[x-1][y+1].fullPress(true);
 						if(fieldC[x-1][y+1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x-1][y+1]);
 				}
 				//bottom 
 				if(!fieldC[x][y+1].isPressed() && fieldC[x][y+1].isNumber()){
-						fieldC[x][y+1].fullPress();
+						fieldC[x][y+1].fullPress(true);
 						if(fieldC[x][y+1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x][y+1]);
 				}
 				//bottom right
 				if(!fieldC[x+1][y+1].isPressed() && fieldC[x+1][y+1].isNumber()){
-						fieldC[x+1][y+1].fullPress();
+						fieldC[x+1][y+1].fullPress(true);
 						if(fieldC[x+1][y+1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x+1][y+1]);
 				}
@@ -286,6 +289,11 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 	public MineFieldState getState(){
 		return fieldState;
 	}
+	
+	public Timer getTimer(){
+		return timer;
+	}
+	
 	public void setDimensions(int width, int height, Graphics2D g2){
 		
 		this.fieldC = new FieldControl[width+2][height+2]; //Extra edges so we don't need to check bounds
@@ -294,25 +302,27 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 		this.fieldWidth = width;
 		this.fieldHeight = height;
 		
-		this.init = true;
+//		this.init = true;
+//		fieldState.reset();
+//		timer.reset();
 		
 		//initialize borders: fullpress borders to identify them
 		for(int i = 0; i<width+2;i++){
-			this.fieldC[i][0] = new FieldControl(i-1,-1);//top border
+			this.fieldC[i][0] = new FieldControl(i-1,-1,this);//top border
 			this.fieldC[i][0].setBorder();
-			this.fieldC[i][fieldHeight+1] = new FieldControl(i-1,fieldHeight);//bottom border
+			this.fieldC[i][fieldHeight+1] = new FieldControl(i-1,fieldHeight,this);//bottom border
 			this.fieldC[i][fieldHeight+1].setBorder();	
 		}
 		for(int i = 1; i<height+1;i++){
-			this.fieldC[0][i] = new FieldControl(-1,i-1);//left border
+			this.fieldC[0][i] = new FieldControl(-1,i-1,this);//left border
 			this.fieldC[0][i].setBorder();
-			this.fieldC[fieldWidth+1][i] = new FieldControl(fieldWidth,i-1);//right border
+			this.fieldC[fieldWidth+1][i] = new FieldControl(fieldWidth,i-1,this);//right border
 			this.fieldC[fieldWidth+1][i].setBorder();
 		}
 //		Initialize middle
 		for(int i = 1; i<width+1;i++)
 			for(int j =1;j<height+1;j++){
-				this.fieldC[i][j] = new FieldControl(i-1,j-1);
+				this.fieldC[i][j] = new FieldControl(i-1,j-1,this);
 				this.fieldD[i][j] = new FieldDrawer(g2,i-1,j-1,fieldC[i][j],obs);
 			}
 		drawField();
@@ -421,16 +431,18 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 				FieldControl field = fieldC[fieldCo.x][fieldCo.y];
 				
 				if (field.isHalfPressed() || !clickReset){
-				
+				//TODO clean this up
 					if(init){
 						init = false;	
 						fieldState.initialized = true;
 						genField(fieldCo.x-1,fieldCo.y-1);
+						timer.startTimer();
 //						System.out.println("new field generated");
 					}
 					
-					field.fullPress();
+					field.fullPress(true);
 					fieldState.started = true;
+					
 					halfPressed = null;
 					//open all neighbor fields that are zero. stop at fields that are numbers.
 					if(field.getNum().ordinal()==0)
@@ -456,6 +468,10 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 		private boolean won;
 		
 		public MineFieldState(){
+			reset();
+		}
+		
+		public void reset(){
 			this.initialized = false;
 			this.lost = false;
 			this.won = false;		
@@ -474,6 +490,18 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 		public boolean isWon(){
 			return won;
 		}
+	}
+
+
+	@Override
+	public void fieldExploded(FieldEvent e) {
+		timer.stopTimer();
+		for(int i = 0;i<fieldWidth;i++)
+			for(int j = 0; j<fieldHeight;j++){
+				if(fieldC[i+1][j+1].isMine())
+					fieldC[i+1][j+1].fullPress(false);
+			}
+		
 	}
 		
 	
