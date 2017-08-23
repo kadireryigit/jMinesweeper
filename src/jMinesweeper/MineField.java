@@ -18,6 +18,8 @@ import java.util.Observer;
 
 import javax.swing.JPanel;
 
+import jMinesweeper.MineFieldControl.MineFieldState;
+
 public class MineField extends JPanel implements Observer{
 	
 	private BufferedImage img;
@@ -31,15 +33,24 @@ public class MineField extends JPanel implements Observer{
 //	private FieldDrawer fields[][];
 //	private FieldControl fieldC[][];
 	private MineFieldControl mineC;
+	private Timer time;
+	private TimerDrawer timeDraw;
+	private MineFieldState fieldState;
 	
 	public MineField(int width, int height){
 		super();
 		
 		this.mineC = new MineFieldControl(width,height,this);
+		this.fieldState = mineC.getState();
 		setDimensions(width,height);
 			
 		this.addMouseListener(mineC); 
 		this.addMouseMotionListener(mineC);
+		
+		this.time = new Timer();
+		this.timeDraw = new TimerDrawer(10,20,time,g2,this);
+		this.time.addObserver(timeDraw);
+		
 		
 	}
 	
@@ -58,13 +69,14 @@ public class MineField extends JPanel implements Observer{
 	}
 	
 	public void setDimensions(int width, int height){
-		if(this.img!=null)
-			this.img.flush();
+		
 		
 		GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment()
 				.getDefaultScreenDevice().getDefaultConfiguration();
 		
 		if(width!=fieldWidth || height!=fieldHeight){ //new size chosen
+			if(this.img!=null)
+				this.img.flush();
 			this.fieldWidth = width;
 			this.fieldHeight = height;
 			this.img = gc.createCompatibleImage((fieldWidth+2)*singleWidth, (fieldHeight+2)*singleHeight);
@@ -82,6 +94,10 @@ public class MineField extends JPanel implements Observer{
 	@Override
 	public void update(Observable obs, Object obj) {
 		this.repaint();
+		if(fieldState.hasStarted())
+			time.startTimer();
+		if(fieldState.hasLost())
+			time.stopTimer();
 	}
 	
 	

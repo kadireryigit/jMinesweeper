@@ -33,6 +33,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 	private FieldGenerator fieldGen;
 	private FieldControl hoveredField;
 	private Observer obs;
+	private MineFieldState fieldState;
 	
 	public MineFieldControl(int width, int height, Observer obs){
 		fieldGen = new FieldGenerator();
@@ -40,6 +41,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 		this.addObserver(obs);
 		this.fieldWidth = width;
 		this.fieldHeight = height;
+		this.fieldState = new MineFieldState();
 	}
 	
 	public void leftPressOnField(FieldControl field){
@@ -71,6 +73,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 	}
 	
 	public void middleReleaseOnField(FieldControl field){
+		
 		int x = middleClicked.getX()+1;
 		int y = middleClicked.getY()+1;
 		int fieldVal = middleClicked.getNum().ordinal();
@@ -86,7 +89,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 		fieldFlags += fieldC[x][y+1].isFlagSet() ? 1 : 0;
 		fieldFlags += fieldC[x+1][y+1].isFlagSet() ? 1 : 0;
 		
-		if(fieldFlags==fieldVal){
+		if(field.isPressed() && fieldFlags==fieldVal){
 			//TODO need to check neighbors here
 			
 			if(!fieldC[x-1][y-1].isBorder())
@@ -120,6 +123,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 		}
 		
 		middleClicked = null;
+		
 	}
 
 	
@@ -279,6 +283,9 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 		this.mines = mines;
 	}
 	
+	public MineFieldState getState(){
+		return fieldState;
+	}
 	public void setDimensions(int width, int height, Graphics2D g2){
 		
 		this.fieldC = new FieldControl[width+2][height+2]; //Extra edges so we don't need to check bounds
@@ -353,7 +360,6 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 //	System.out.println("moved");
 		
 	}
-	boolean doubleClickState = false;
 	long doubleClickTimeStart;
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -418,11 +424,13 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 				
 					if(init){
 						init = false;	
+						fieldState.initialized = true;
 						genField(fieldCo.x-1,fieldCo.y-1);
 //						System.out.println("new field generated");
 					}
 					
 					field.fullPress();
+					fieldState.started = true;
 					halfPressed = null;
 					//open all neighbor fields that are zero. stop at fields that are numbers.
 					if(field.getNum().ordinal()==0)
@@ -441,7 +449,32 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 	}
 		
 		
-	
+	class MineFieldState{
+		private boolean initialized;
+		private boolean started;
+		private boolean lost;
+		private boolean won;
+		
+		public MineFieldState(){
+			this.initialized = false;
+			this.lost = false;
+			this.won = false;		
+			this.started = false;
+		}
+		
+		public boolean hasStarted(){
+			return started;
+		}
+		public boolean isInitialized(){
+			return initialized;
+		}
+		public boolean hasLost(){
+			return lost;
+		}
+		public boolean isWon(){
+			return won;
+		}
+	}
 		
 	
 	

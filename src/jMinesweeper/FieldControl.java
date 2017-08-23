@@ -15,10 +15,13 @@ public class FieldControl extends Observable{
 	private int x,y;
 	private Number num;
 	
+	
+	//TODO Split this into inner class FieldState
 	public FieldControl(int x, int y){
 		this.x = x;
 		this.y = y;
 		this.reset();
+		
 	}
 	
 	public int getX(){
