@@ -134,9 +134,7 @@ public class FieldDrawer extends Observable implements Observer{
 	public void drawNumber(Number num,boolean update){
 		if(num==null) return;
 		
-		g2.setColor(num.getColor());
-		g2.setFont(new Font("Arial",Font.BOLD,16));
-		
+		g2.setColor(num.getColor());	
 		g2.drawString(String.valueOf(num.getChar()), left+MineField.singleWidth/2-5, top+MineField.singleHeight/2+5);
 		if(update){
 			this.setChanged();

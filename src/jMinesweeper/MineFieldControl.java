@@ -20,6 +20,9 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 	private int spawnX, spawnY;
 	private FieldControl halfPressed;
 	private FieldControl middleClicked;
+	private FlagCountDrawer flagCountDrawer;
+	private TimerDrawer timeDraw;
+//	private int flagCount;
 	
 	/*
 	 * Enables reset of a clicked field if the mouse was moved away from the field before release of the mouse button
@@ -36,13 +39,14 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 	private MineFieldState fieldState;
 	
 	public MineFieldControl(int width, int height, Observer obs){
-		fieldGen = new FieldGenerator();
+		this.fieldGen = new FieldGenerator();
 		this.timer = new Timer();
 		this.obs = obs;
 		this.addObserver(obs);
 		this.fieldWidth = width;
 		this.fieldHeight = height;
 		this.fieldState = new MineFieldState();
+		
 	}
 	
 	public void leftPressOnField(FieldControl field){
@@ -130,6 +134,17 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 	
 	public void rightClickOnField(FieldControl field){
 		field.changeRightClick();
+		if(field.isFlagSet()){
+			fieldState.flagCount--;
+			flagCountDrawer.draw(fieldState.flagCount);
+		}
+			
+		else if(field.isQmarkSet()) {
+			fieldState.flagCount++;
+			flagCountDrawer.draw(fieldState.flagCount);
+		}
+		
+		System.out.println(fieldState.flagCount);
 	}
 
 	
@@ -284,6 +299,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 	
 	public void setMineCount(int mines){
 		this.mines = mines;
+		this.fieldState.flagCount = mines;
 	}
 	
 	public MineFieldState getState(){
@@ -305,6 +321,9 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 //		this.init = true;
 //		fieldState.reset();
 //		timer.reset();
+		
+		this.flagCountDrawer = new FlagCountDrawer(fieldWidth*MineField.singleWidth-40,20,g2);
+		this.timeDraw = new TimerDrawer(10,20,timer,g2,obs);
 		
 		//initialize borders: fullpress borders to identify them
 		for(int i = 0; i<width+2;i++){
@@ -466,6 +485,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 		private boolean started;
 		private boolean lost;
 		private boolean won;
+		private int flagCount;
 		
 		public MineFieldState(){
 			reset();
@@ -478,6 +498,9 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 			this.started = false;
 		}
 		
+		public int getFlagCount(){
+			return flagCount;
+		}
 		public boolean hasStarted(){
 			return started;
 		}

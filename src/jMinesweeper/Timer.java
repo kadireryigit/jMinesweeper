@@ -91,7 +91,9 @@ public class Timer extends Observable implements Runnable{
 		System.out.println("Timer reset");
 		this.run = false;
 		count = 0;
-		TimerThread.interrupt();
+		this.setChanged();
+		this.notifyObservers();
+//		TimerThread.interrupt();
 	}
 	
 	

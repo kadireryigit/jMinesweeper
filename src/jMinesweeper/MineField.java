@@ -1,6 +1,7 @@
 package jMinesweeper;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -32,7 +33,7 @@ public class MineField extends JPanel implements Observer{
 	private int fieldWidth, fieldHeight;
 	private MineFieldControl mineC;
 	
-	private TimerDrawer timeDraw;
+	
 	private MineFieldState fieldState;
 	
 	public MineField(int width, int height){
@@ -46,7 +47,6 @@ public class MineField extends JPanel implements Observer{
 		this.addMouseListener(mineC); 
 		this.addMouseMotionListener(mineC);
 		
-		this.timeDraw = new TimerDrawer(10,20,mineC.getTimer(),g2,this);
 		
 		
 	}
@@ -78,6 +78,7 @@ public class MineField extends JPanel implements Observer{
 			this.fieldHeight = height;
 			this.img = gc.createCompatibleImage((fieldWidth+2)*singleWidth, (fieldHeight+2)*singleHeight);
 			this.g2 = img.createGraphics();
+			g2.setFont(new Font("Arial",Font.BOLD,16));
 	//		this.g2.setColor(Color.LIGHT_GRAY.brighter());
 			this.g2.fillRect(0, 0, img.getWidth(), img.getHeight());
 			this.setPreferredSize(new Dimension(img.getWidth(), img.getHeight()));

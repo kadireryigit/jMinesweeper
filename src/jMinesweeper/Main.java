@@ -171,6 +171,7 @@ heightTF.addFocusListener(new FocusListener() {
 		buttonPanel.add(mineCountTF);
 		
 		mine = new MineField(startWidth,startHeight);
+		mine.setMineCount(startMines);
 //		mine.drawField();
 		
 		
