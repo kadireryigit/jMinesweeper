@@ -6,25 +6,20 @@ import java.util.Observable;
 
 public class FieldControl extends Observable{
 
-	private boolean isHalfPressed;
-	private boolean isFullPressed;
-	private boolean isHovered;
-	private boolean numVisible;
-	private boolean flagSet;
-	private boolean qMarkSet;
-	private boolean isMine;
-	private boolean isBorder;
+	
 	private int x,y;
-	private Number num;
+//	private Number num;
 	private List<FieldListener> listeners;
+	private FieldState state;
 	
 	//TODO Split this into inner class FieldState
 	public FieldControl(int x, int y,FieldListener mineField){
 		this.x = x;
 		this.y = y;
-		this.reset();
 		this.listeners = new ArrayList<FieldListener>();
-		if(mineField!=null)listeners.add(mineField);
+		if(mineField!=null) listeners.add(mineField);
+		this.state = new FieldState();
+		this.reset();
 	}
 	
 	public void addListener(FieldListener mineField){
@@ -44,65 +39,27 @@ public class FieldControl extends Observable{
 	public int getY(){
 		return y;
 	}
-	public boolean isNumber(){
-		return !isMine;
-	}
-	public boolean isMine(){
-		return isMine;
-	}
-	public boolean isQmarkSet(){
-		return qMarkSet;
-	}
-	public boolean isFlagSet(){
-		return flagSet;
-	}
-	public boolean isExploded(){
-		return isFullPressed && isMine;
-	}
-	public boolean isPressed(){
-		return isHalfPressed || isFullPressed;
-	}
-	public boolean isHalfPressed(){
-		return isHalfPressed;
-	}
-	
-	public boolean isFullPressed(){
-		return isFullPressed;
-	}
-	
-	public boolean isHovered(){
-		return isHovered;
-	}
-	
-	public boolean numVisible(){
-		return isFullPressed || flagSet || qMarkSet;
-	}
-	
-	
-	public boolean isBorder(){
-		return isBorder;
-	}
 	
 	public void setBorder(){
-		this.isBorder = true;
+		state.isBorder = true;
 	}
 	public void setFlag(){
 //		this.num = Number.FLAG;
-		if(!isFullPressed && !isHalfPressed){
-			this.flagSet = true;
-			this.qMarkSet = false;
-			this.numVisible = true;
+		if(!state.isFullPressed && !state.isHalfPressed){
+			state.flagSet = true;
+			state.qMarkSet = false;
+			state.numVisible = true;
 			this.setChanged();
 			this.notifyObservers();
 		}
 	}
 	
 	public void setQMark(){
-		if(!isFullPressed && !isHalfPressed){
+		if(!state.isFullPressed && !state.isHalfPressed){
 	//		this.num = Number.QUESTION;
-			this.flagSet = false;
-			this.qMarkSet = true;
-			this.numVisible = true;
+			state.flagSet = false;
+			state.qMarkSet = true;
+			state.numVisible = true;
 			this.setChanged();
 			this.notifyObservers();
 		}
@@ -110,85 +67,85 @@ public class FieldControl extends Observable{
 	
 	public void setZero(){
 //		this.num = Number.ZERO;
-		this.flagSet = false;
-		this.qMarkSet = false;
-		this.numVisible = false;
+		state.flagSet = false;
+		state.qMarkSet = false;
+		state.numVisible = false;
 		this.setChanged();
 		this.notifyObservers();
 	}
 	
 	public void deleteFlagOrMark(){
 //		this.num = Number.ZERO;
-		this.flagSet = false;
-		this.qMarkSet = false;
-		this.numVisible = false;
+		state.flagSet = false;
+		state.qMarkSet = false;
+		state.numVisible = false;
 		this.setChanged();
 		this.notifyObservers();
 	}
 	
 	public boolean setOffMine(){
-		if(isMine){
-			this.setChanged();
-			this.notifyObservers();
+		if(state.isMine){
+			setChanged();
+			notifyObservers();
 		}
-		return isMine;
+		return state.isMine;
 	}
 	
 	public void setMine(){
-		this.num = Number.MINE;
-		this.isMine = true;
+		state.num = Number.MINE;
+		state.isMine = true;
 	}
 	
 	public boolean fullPress(boolean fireEvent){
-		if(!flagSet && !isFullPressed){
-			if(fireEvent & isMine)
+		if(!state.flagSet && !state.isFullPressed){
+			if(fireEvent & state.isMine)
 				fireEvent();
-			isFullPressed = true;
-			isHalfPressed = false;
-			numVisible = true;
-			qMarkSet = false;
+			state.isFullPressed = true;
+			state.isHalfPressed = false;
+			state.numVisible = true;
+			state.qMarkSet = false;
 			this.setChanged();
 			this.notifyObservers();
 		}
-		return !flagSet && !isFullPressed;
+		return !state.flagSet && !state.isFullPressed;
 	}
 	
 	public boolean halfPress(){
-		if(!flagSet && !isFullPressed){
-			isHalfPressed = true;
-			isFullPressed = false;
+		if(!state.flagSet && !state.isFullPressed){
+			state.isHalfPressed = true;
+			state.isFullPressed = false;
 			this.setChanged();
 			this.notifyObservers();
 		}
-		return !flagSet && !isFullPressed;
+		return !state.flagSet && !state.isFullPressed;
 	}
 	
 	public boolean unPress(){
-		if(!isFullPressed){
-			isFullPressed = false;
-			isHalfPressed = false;
+		if(!state.isFullPressed){
+			state.isFullPressed = false;
+			state.isHalfPressed = false;
 			this.setChanged();
 			this.notifyObservers();
 		}
-		return !isFullPressed;
+		return !state.isFullPressed;
 	}
 	
 	public void hoverOn(){
-		if(!isPressed()){
-			isHovered = true;
+		if(!state.isPressed()){
+			state.isHovered = true;
 			this.setChanged();
 			this.notifyObservers();
 		}
 	}
 	
 	public void hoverOff(){
-		isHovered = false;
+		state.isHovered = false;
 		this.setChanged();
 		this.notifyObservers();
 	}
 	
-	public void setNum(Number num){
-		this.num = num; 
+	public void setNum(Number num){ 
+		this.state.num = num;
 //		numVisible = true;
 //		this.setChanged();
 //		this.notifyObservers();
@@ -196,12 +153,12 @@ public class FieldControl extends Observable{
 	
 	public void setNum(int num){
 		if(num==FieldGenerator.MINE_BLOCK){
-			this.num = Number.MINE;
-			this.isMine = true;
+			state.num = Number.MINE;
+			state.isMine = true;
 		}else{
-			this.isMine = false;
+			state.isMine = false;
 			num%=9;
-			this.num = Number.values()[num];
+			state.num = Number.values()[num];
 		}
 //		numVisible = true;
 //		this.setChanged();
@@ -209,32 +166,97 @@ public class FieldControl extends Observable{
 	}
 	
 	public void setNumVisible(){
-		numVisible = true;
+		state.numVisible = true;
 		this.setChanged();
 		this.notifyObservers();
 	}
 	
 	public Number getNum(){
-		return this.num;
+		return state.num;
 	}
 	
+	public FieldState getState(){
+		return state;
+	}
 	public void changeRightClick(){
-		if(!isFullPressed && !isHalfPressed){
-			if(flagSet)
+		if(!state.isFullPressed && !state.isHalfPressed){
+			if(state.flagSet)
 				setQMark();
-			else if(qMarkSet)
+			else if(state.qMarkSet)
 				setZero();
 			else setFlag();
 		}
 	}
 	public void reset(){
-		this.isHalfPressed = false;
-		this.isHovered = false;
-		this.numVisible = false;
-		this.isFullPressed = false;
-		this.flagSet = false;
-		this.qMarkSet = false;
-		this.isMine = false;
-		this.num = Number.ZERO;
+		state.reset();
+	}
+	
+	class FieldState{
+		private boolean isHalfPressed;
+		private boolean isFullPressed;
+		private boolean isHovered;
+		private boolean numVisible;
+		private boolean flagSet;
+		private boolean qMarkSet;
+		private boolean isMine;
+		private boolean isBorder;
+		private Number num;
+		
+		public FieldState(){
+			reset();
+		}
+		public boolean isNumber(){
+			return !isMine;
+		}
+		public boolean isMine(){
+			return isMine;
+		}
+		public boolean isQmarkSet(){
+			return qMarkSet;
+		}
+		public boolean isFlagSet(){
+			return flagSet;
+		}
+		public boolean isExploded(){
+			return isFullPressed && isMine;
+		}
+		public boolean isPressed(){
+			return isHalfPressed || isFullPressed;
+		}
+		public boolean isHalfPressed(){
+			return isHalfPressed;
+		}
+		
+		public boolean isFullPressed(){
+			return isFullPressed;
+		}
+		
+		public boolean isHovered(){
+			return isHovered;
+		}
+		
+		public boolean numVisible(){
+			return isFullPressed || flagSet || qMarkSet;
+		}
+		
+		public boolean isBorder(){
+			return isBorder;
+		}
+		
+		public Number getNum(){
+			return num;
+		}
+		
+		public void reset(){
+			isHalfPressed = false;
+			isHovered = false;
+			numVisible = false;
+			isFullPressed = false;
+			flagSet = false;
+			qMarkSet = false;
+			isMine = false;
+			num = Number.ZERO;
+		}
+		
 	}
 }

@@ -1,14 +1,15 @@
 package jMinesweeper;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.Observable;
 import java.util.Observer;
 
+import jMinesweeper.FieldControl.FieldState;
+
 public class FieldDrawer extends Observable implements Observer{
 	
-	public final FieldControl fieldState;
+	public final FieldState fieldState;
 	private int left;
 	private int right; 
 	private int top;
@@ -20,12 +21,11 @@ public class FieldDrawer extends Observable implements Observer{
 	private final Color hoverColor = new Color(0xd5,0xd5,0xd5);
 	
 	
-	public FieldDrawer(Graphics2D g2, int x, int y, FieldControl field,Observer obs){
+	public FieldDrawer(Graphics2D g2, int x, int y, FieldState field,Observer obs){
 		this.g2 = g2;
 		this.fieldState = field;
 		if(obs!=null)
 		this.addObserver(obs);
-		this.fieldState.addObserver(this);
 		this.left 	= ( x + MineField.fieldOffsetX )     * MineField.singleWidth  + MineField.indentX;     
 		this.right	= ( x + MineField.fieldOffsetX + 1 ) * MineField.singleWidth  - MineField.indentX - 1; 
 		this.top 	= ( y + MineField.fieldOffsetY )     * MineField.singleHeight + MineField.indentY;     

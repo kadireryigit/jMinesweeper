@@ -74,7 +74,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 	}
 
 	public void leftReleaseOnField(){
-		
+		//TODO implement this
 	}
 	
 	public void middleReleaseOnField(FieldControl field){
@@ -85,35 +85,34 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 		int fieldFlags = 0;
 		
 		//count flags
-		fieldFlags += fieldC[x-1][y-1].isFlagSet() ? 1 : 0;
-		fieldFlags += fieldC[x][y-1].isFlagSet() ? 1 : 0;
-		fieldFlags += fieldC[x+1][y-1].isFlagSet() ? 1 : 0;
-		fieldFlags += fieldC[x-1][y].isFlagSet() ? 1 : 0;
-		fieldFlags += fieldC[x+1][y].isFlagSet() ? 1 : 0;
-		fieldFlags += fieldC[x-1][y+1].isFlagSet() ? 1 : 0;
-		fieldFlags += fieldC[x][y+1].isFlagSet() ? 1 : 0;
-		fieldFlags += fieldC[x+1][y+1].isFlagSet() ? 1 : 0;
+		fieldFlags += fieldC[x-1][y-1].getState().isFlagSet() ? 1 : 0;
+		fieldFlags += fieldC[x][y-1].getState().isFlagSet() ? 1 : 0;
+		fieldFlags += fieldC[x+1][y-1].getState().isFlagSet() ? 1 : 0;
+		fieldFlags += fieldC[x-1][y].getState().isFlagSet() ? 1 : 0;
+		fieldFlags += fieldC[x+1][y].getState().isFlagSet() ? 1 : 0;
+		fieldFlags += fieldC[x-1][y+1].getState().isFlagSet() ? 1 : 0;
+		fieldFlags += fieldC[x][y+1].getState().isFlagSet() ? 1 : 0;
+		fieldFlags += fieldC[x+1][y+1].getState().isFlagSet() ? 1 : 0;
 		
-		if(field.isPressed() && fieldFlags==fieldVal){
-			//TODO need to check neighbors here
+		if(field.getState().isPressed() && fieldFlags==fieldVal){
 			
-			if(!fieldC[x-1][y-1].isBorder())
+			if(!fieldC[x-1][y-1].getState().isBorder())
 				clickZeroField(fieldC[x-1][y-1]);
-			if(!fieldC[x][y-1].isBorder())
+			if(!fieldC[x][y-1].getState().isBorder())
 				clickZeroField(fieldC[x][y-1]);
-			if(!fieldC[x+1][y-1].isBorder())
+			if(!fieldC[x+1][y-1].getState().isBorder())
 				clickZeroField(fieldC[x+1][y-1]);
-			if(!fieldC[x-1][y].isBorder())
+			if(!fieldC[x-1][y].getState().isBorder())
 				clickZeroField(fieldC[x-1][y]);
-			if(!fieldC[x][y].isBorder())
+			if(!fieldC[x][y].getState().isBorder())
 				clickZeroField(fieldC[x][y]);
-			if(!fieldC[x+1][y].isBorder())
+			if(!fieldC[x+1][y].getState().isBorder())
 				clickZeroField(fieldC[x+1][y]);
-			if(!fieldC[x-1][y+1].isBorder())
+			if(!fieldC[x-1][y+1].getState().isBorder())
 				clickZeroField(fieldC[x-1][y+1]);
-			if(!fieldC[x][y+1].isBorder())
+			if(!fieldC[x][y+1].getState().isBorder())
 				clickZeroField(fieldC[x][y+1]);
-			if(!fieldC[x+1][y+1].isBorder())
+			if(!fieldC[x+1][y+1].getState().isBorder())
 				clickZeroField(fieldC[x+1][y+1]);
 		} else{
 			fieldC[x-1][y-1].unPress();
@@ -134,12 +133,12 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 	
 	public void rightClickOnField(FieldControl field){
 		field.changeRightClick();
-		if(field.isFlagSet()){
+		if(field.getState().isFlagSet()){
 			fieldState.flagCount--;
 			flagCountDrawer.draw(fieldState.flagCount);
 		}
 			
-		else if(field.isQmarkSet()) {
+		else if(field.getState().isQmarkSet()) {
 			fieldState.flagCount++;
 			flagCountDrawer.draw(fieldState.flagCount);
 		}
@@ -240,53 +239,53 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 			
 			FieldControl curField = neighbors.remove(0);
 			
-			if (!curField.isBorder() && curField.getNum().ordinal()==0){ //collect neighbors
+			if (!curField.getState().isBorder() && curField.getNum().ordinal()==0){ //collect neighbors
 				x = curField.getX()+1;
 				y = curField.getY()+1;
 				//top left
-				if(!fieldC[x-1][y-1].isPressed() && fieldC[x-1][y-1].isNumber()){
+				if(!fieldC[x-1][y-1].getState().isPressed() && fieldC[x-1][y-1].getState().isNumber()){
 						fieldC[x-1][y-1].fullPress(true);
 						if(fieldC[x-1][y-1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x-1][y-1]);
 				}
 				//top
-				if(!fieldC[x][y-1].isPressed() && fieldC[x][y-1].isNumber()){
+				if(!fieldC[x][y-1].getState().isPressed() && fieldC[x][y-1].getState().isNumber()){
 						fieldC[x][y-1].fullPress(true);
 						if(fieldC[x][y-1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x][y-1]);
 				}
 				//top right
-				if(!fieldC[x+1][y-1].isPressed() && fieldC[x+1][y-1].isNumber()){
+				if(!fieldC[x+1][y-1].getState().isPressed() && fieldC[x+1][y-1].getState().isNumber()){
 						fieldC[x+1][y-1].fullPress(true);
 						if(fieldC[x+1][y-1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x+1][y-1]);
 				}
 				//left
-				if(!fieldC[x-1][y].isPressed() && fieldC[x-1][y].isNumber()){
+				if(!fieldC[x-1][y].getState().isPressed() && fieldC[x-1][y].getState().isNumber()){
 						fieldC[x-1][y].fullPress(true);
 						if(fieldC[x-1][y].getNum().ordinal()==0)
 							neighbors.add(fieldC[x-1][y]);
 				}
 				//right
-				if(!fieldC[x+1][y].isPressed() && fieldC[x+1][y].isNumber()){
+				if(!fieldC[x+1][y].getState().isPressed() && fieldC[x+1][y].getState().isNumber()){
 						fieldC[x+1][y].fullPress(true);
 						if(fieldC[x+1][y].getNum().ordinal()==0)
 							neighbors.add(fieldC[x+1][y]);
 				}
 				//bottom left
-				if(!fieldC[x-1][y+1].isPressed() && fieldC[x-1][y+1].isNumber()){
+				if(!fieldC[x-1][y+1].getState().isPressed() && fieldC[x-1][y+1].getState().isNumber()){
 						fieldC[x-1][y+1].fullPress(true);
 						if(fieldC[x-1][y+1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x-1][y+1]);
 				}
 				//bottom 
-				if(!fieldC[x][y+1].isPressed() && fieldC[x][y+1].isNumber()){
+				if(!fieldC[x][y+1].getState().isPressed() && fieldC[x][y+1].getState().isNumber()){
 						fieldC[x][y+1].fullPress(true);
 						if(fieldC[x][y+1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x][y+1]);
 				}
 				//bottom right
-				if(!fieldC[x+1][y+1].isPressed() && fieldC[x+1][y+1].isNumber()){
+				if(!fieldC[x+1][y+1].getState().isPressed() && fieldC[x+1][y+1].getState().isNumber()){
 						fieldC[x+1][y+1].fullPress(true);
 						if(fieldC[x+1][y+1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x+1][y+1]);
@@ -342,7 +341,8 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 		for(int i = 1; i<width+1;i++)
 			for(int j =1;j<height+1;j++){
 				this.fieldC[i][j] = new FieldControl(i-1,j-1,this);
-				this.fieldD[i][j] = new FieldDrawer(g2,i-1,j-1,fieldC[i][j],obs);
+				this.fieldD[i][j] = new FieldDrawer(g2,i-1,j-1,fieldC[i][j].getState(),obs);
+				this.fieldC[i][j].addObserver(fieldD[i][j]);
 			}
 		drawField();
 		
@@ -394,7 +394,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 	public void mouseClicked(MouseEvent e) {
 		long delta = System.nanoTime() - doubleClickTimeStart;
 		doubleClickTimeStart = System.nanoTime();
-		if(delta<200000000){ //200ms time between single clicks
+		if(!fieldState.lost && delta<200000000){ //200ms time between single clicks
 			//Double Click detected
 			Point fieldCo = pixelToFieldCoor(e.getX() ,e.getY());
 			if(checkIndices(fieldCo.x, fieldCo.y)){
@@ -422,7 +422,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 	@Override
 	public void mousePressed(MouseEvent e) {
 		Point fieldCo = pixelToFieldCoor(e.getX() ,e.getY());
-		if(checkIndices(fieldCo.x,fieldCo.y)){
+		if(!fieldState.lost && checkIndices(fieldCo.x,fieldCo.y)){
 			FieldControl field = fieldC[fieldCo.x][fieldCo.y];
 			
 			//Left click
@@ -449,7 +449,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 			if(checkIndices(fieldCo.x, fieldCo.y)){
 				FieldControl field = fieldC[fieldCo.x][fieldCo.y];
 				
-				if (field.isHalfPressed() || !clickReset){
+				if (field.getState().isHalfPressed() || !clickReset){
 				//TODO clean this up
 					if(init){
 						init = false;	
@@ -466,9 +466,6 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 					//open all neighbor fields that are zero. stop at fields that are numbers.
 					if(field.getNum().ordinal()==0)
 						clickZeroField(field);
-					
-					
-				
 					
 				}
 
@@ -518,10 +515,11 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 
 	@Override
 	public void fieldExploded(FieldEvent e) {
+		fieldState.lost=true;
 		timer.stopTimer();
 		for(int i = 0;i<fieldWidth;i++)
 			for(int j = 0; j<fieldHeight;j++){
-				if(fieldC[i+1][j+1].isMine())
+				if(fieldC[i+1][j+1].getState().isMine())
 					fieldC[i+1][j+1].fullPress(false);
 			}
 		
