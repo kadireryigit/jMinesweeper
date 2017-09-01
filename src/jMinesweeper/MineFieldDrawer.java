@@ -21,32 +21,26 @@ import javax.swing.JPanel;
 
 import jMinesweeper.MineFieldControl.MineFieldState;
 
-public class MineField extends JPanel implements Observer{
+public class MineFieldDrawer extends JPanel implements Observer{
 	
 	private BufferedImage img;
 	private Graphics2D g2;
 	public final static int fieldOffsetX = 1, fieldOffsetY = 1;
 	public final static int indentX = 0, indentY = 0;
-	public final static  int singleWidth=40-2*indentX, singleHeight=40-2*indentY;
+	public final static int singleWidth=40-2*indentX, singleHeight=40-2*indentY;
 	public final static int outdentX = 0, outdentY = 0;
 	
 	private int fieldWidth, fieldHeight;
-	private MineFieldControl mineC;
+//	private MineFieldControl mineC;
 	
 	
 	private MineFieldState fieldState;
 	
-	public MineField(int width, int height){
+	public MineFieldDrawer(int width, int height, MineFieldState mineState){
 		super();
-		
-		this.mineC = new MineFieldControl(width,height,this);
-		this.fieldState = mineC.getState();
-//		this.time = new Timer();
-		setDimensions(width,height);
+
+		this.fieldState = mineState;
 			
-		this.addMouseListener(mineC); 
-		this.addMouseMotionListener(mineC);
-		
 		
 		
 	}
@@ -55,15 +49,6 @@ public class MineField extends JPanel implements Observer{
 	public void paint(Graphics g){
 		g.drawImage(img, 0, 0, null);
 	}
-
-	
-	public void reset(){
-		mineC.reset();
-	}
-	
-	public void setMineCount(int mines){
-		mineC.setMineCount(mines);
-	}
 	
 	public void setDimensions(int width, int height){
 		
@@ -71,24 +56,24 @@ public class MineField extends JPanel implements Observer{
 		GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment()
 				.getDefaultScreenDevice().getDefaultConfiguration();
 		
-		if(width!=fieldWidth || height!=fieldHeight){ //new size chosen
-			if(this.img!=null)
-				this.img.flush();
-			this.fieldWidth = width;
-			this.fieldHeight = height;
-			this.img = gc.createCompatibleImage((fieldWidth+2)*singleWidth, (fieldHeight+2)*singleHeight);
-			this.g2 = img.createGraphics();
-			g2.setFont(new Font("Arial",Font.BOLD,16));
-	//		this.g2.setColor(Color.LIGHT_GRAY.brighter());
-			this.g2.fillRect(0, 0, img.getWidth(), img.getHeight());
-			this.setPreferredSize(new Dimension(img.getWidth(), img.getHeight()));
-			
-			mineC.setDimensions(width, height, g2);
-		}else{
-			mineC.reset();
-		}
+	
+		if(this.img!=null)
+			this.img.flush();
+		this.fieldWidth = width;
+		this.fieldHeight = height;
+		this.img = gc.createCompatibleImage((fieldWidth+2)*singleWidth, (fieldHeight+2)*singleHeight);
+		this.g2 = img.createGraphics();
+		this.g2.setFont(new Font("Arial",Font.BOLD,16));
+//		this.g2.setColor(Color.LIGHT_GRAY.brighter());
+		this.g2.fillRect(0, 0, img.getWidth(), img.getHeight());
+		this.setPreferredSize(new Dimension(img.getWidth(), img.getHeight()));
+		
+		
 	}
 	
+	public Graphics2D getGraphics2D(){
+		return this.g2;
+	}
 	@Override
 	public void update(Observable obs, Object obj) {
 		this.repaint();

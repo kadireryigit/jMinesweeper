@@ -26,10 +26,10 @@ public class FieldDrawer extends Observable implements Observer{
 		this.fieldState = field;
 		if(obs!=null)
 		this.addObserver(obs);
-		this.left 	= ( x + MineField.fieldOffsetX )     * MineField.singleWidth  + MineField.indentX;     
-		this.right	= ( x + MineField.fieldOffsetX + 1 ) * MineField.singleWidth  - MineField.indentX - 1; 
-		this.top 	= ( y + MineField.fieldOffsetY )     * MineField.singleHeight + MineField.indentY;     
-		this.bottom = ( y + MineField.fieldOffsetY + 1 ) * MineField.singleHeight - MineField.indentY - 1;
+		this.left 	= ( x + MineFieldDrawer.fieldOffsetX )     * MineFieldDrawer.singleWidth  + MineFieldDrawer.indentX;     
+		this.right	= ( x + MineFieldDrawer.fieldOffsetX + 1 ) * MineFieldDrawer.singleWidth  - MineFieldDrawer.indentX - 1; 
+		this.top 	= ( y + MineFieldDrawer.fieldOffsetY )     * MineFieldDrawer.singleHeight + MineFieldDrawer.indentY;     
+		this.bottom = ( y + MineFieldDrawer.fieldOffsetY + 1 ) * MineFieldDrawer.singleHeight - MineFieldDrawer.indentY - 1;
 	}                       
 	/**
 	 * Draws a single clickable fieldbutton.
@@ -90,7 +90,7 @@ public class FieldDrawer extends Observable implements Observer{
 		
 		//draw center
 		g2.setColor(Color.RED);
-		g2.fillRect(left+1, top+1, MineField.singleWidth-2, MineField.singleHeight-2);
+		g2.fillRect(left+1, top+1, MineFieldDrawer.singleWidth-2, MineFieldDrawer.singleHeight-2);
 		
 		//draw bottom and right dark borders
 		g2.setColor(Color.LIGHT_GRAY);
@@ -135,12 +135,14 @@ public class FieldDrawer extends Observable implements Observer{
 		if(num==null) return;
 		
 		g2.setColor(num.getColor());	
-		g2.drawString(String.valueOf(num.getChar()), left+MineField.singleWidth/2-5, top+MineField.singleHeight/2+5);
+		g2.drawString(String.valueOf(num.getChar()), left+MineFieldDrawer.singleWidth/2-5, top+MineFieldDrawer.singleHeight/2+5);
 		if(update){
 			this.setChanged();
 			this.notifyObservers();
 		}
 	}
+	
+	
 	
 	public void draw(boolean update){
 		if(fieldState.isPressed()){
@@ -165,6 +167,9 @@ public class FieldDrawer extends Observable implements Observer{
 			else 
 				drawNumber(fieldState.getNum(),false);
 		}
+		
+		
+		
 		if(update){
 			this.setChanged();
 			this.notifyObservers();

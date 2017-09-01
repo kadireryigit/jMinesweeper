@@ -66,7 +66,7 @@ public class Timer extends Observable implements Runnable{
 		
 		if(!this.run){
 			
-			System.out.println("Timer started");
+//			System.out.println("Timer started");
 			this.run = true;
 			if(!TimerThread.isAlive())
 				TimerThread.start();
@@ -80,7 +80,7 @@ public class Timer extends Observable implements Runnable{
 	public void stopTimer(){
 		
 		if(this.run){
-			System.out.println("Timer stopped");
+//			System.out.println("Timer stopped");
 			this.run = false;
 			TimerThread.interrupt();
 		}
@@ -88,7 +88,7 @@ public class Timer extends Observable implements Runnable{
 	
 	public void reset(){
 		this.init = true;
-		System.out.println("Timer reset");
+//		System.out.println("Timer reset");
 		this.run = false;
 		count = 0;
 		this.setChanged();
