@@ -477,6 +477,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 				
 				if (field.getState().isHalfPressed() || !clickReset){
 				//TODO clean this up
+				//TODO add win event
 					if(init){
 						init = false;	
 						fieldState.initialized = true;
@@ -707,6 +708,8 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 				if(fieldC[i+1][j+1].getState().isMine())
 					fieldC[i+1][j+1].fullPress(false);
 			}
+		
+		//TODO add highscore table and make this Dialog better looking
 		JOptionPane.showMessageDialog(f, "Game Over");
 	}
 		

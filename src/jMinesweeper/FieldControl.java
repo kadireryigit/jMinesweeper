@@ -12,7 +12,6 @@ public class FieldControl extends Observable{
 	private List<FieldListener> listeners;
 	private FieldState state;
 	
-	//TODO Split this into inner class FieldState
 	public FieldControl(int x, int y,FieldListener mineField){
 		this.x = x;
 		this.y = y;

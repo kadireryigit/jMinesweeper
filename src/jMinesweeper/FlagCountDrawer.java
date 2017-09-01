@@ -21,6 +21,7 @@ public class FlagCountDrawer{
 		g2.fillRect(x, y-20, 200, 20);
 		g2.setColor(Color.black);
 		g2.drawString( "Mines Left: " + count ,x,y);
+		//TODO add mine image instead of text
 	}
 
 	

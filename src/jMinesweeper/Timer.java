@@ -103,7 +103,6 @@ public class Timer extends Observable implements Runnable{
 		try {
 			Thread.sleep(5123);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		t.stopTimer();

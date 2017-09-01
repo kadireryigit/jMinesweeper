@@ -13,7 +13,7 @@ public enum Number {
 	SIX('6',new Color(0x008284)),
 	SEVEN('7',new Color(0x840084)),
 	EIGHT('8',Color.BLACK),
-	FLAG('\u25BA',Color.RED),
+	FLAG('\u25BA',Color.RED),//TODO add Flag, mine and question mark images instead of text
 	QUESTION('?',Color.green),
 	MINE('\u00A4',Color.BLACK);
 	

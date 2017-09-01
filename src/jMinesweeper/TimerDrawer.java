@@ -43,7 +43,7 @@ public class TimerDrawer extends Observable implements Observer {
 		g2.setColor(Color.black);
 //		g2.setFont(new Font("Arial",Font.BOLD,16));
 		g2.drawString("Time: " + h+ ":"+m + ":"+s, x, y);
-		
+		//TODO add time picture instead of text
 	}
 
 	@Override
