@@ -102,12 +102,13 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 		//TODO implement this
 	}
 	
-	public void middleReleaseOnField(FieldControl field){
+	public int middleReleaseOnField(FieldControl field){
 		
 		int x = middleClicked.getX()+1;
 		int y = middleClicked.getY()+1;
 		int fieldVal = middleClicked.getNum().ordinal();
 		int fieldFlags = 0;
+		int fieldsOpened = 0;
 		
 		//count flags
 		fieldFlags += fieldC[x-1][y-1].getState().isFlagSet() ? 1 : 0;
@@ -122,23 +123,23 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 		if(field.getState().isPressed() && fieldFlags==fieldVal){
 			
 			if(!fieldC[x-1][y-1].getState().isBorder())
-				clickZeroField(fieldC[x-1][y-1]);
+				fieldsOpened += clickZeroField(fieldC[x-1][y-1]);
 			if(!fieldC[x][y-1].getState().isBorder())
-				clickZeroField(fieldC[x][y-1]);
+				fieldsOpened += clickZeroField(fieldC[x][y-1]);
 			if(!fieldC[x+1][y-1].getState().isBorder())
-				clickZeroField(fieldC[x+1][y-1]);
+				fieldsOpened += clickZeroField(fieldC[x+1][y-1]);
 			if(!fieldC[x-1][y].getState().isBorder())
-				clickZeroField(fieldC[x-1][y]);
+				fieldsOpened += clickZeroField(fieldC[x-1][y]);
 			if(!fieldC[x][y].getState().isBorder())
-				clickZeroField(fieldC[x][y]);
+				fieldsOpened += clickZeroField(fieldC[x][y]);
 			if(!fieldC[x+1][y].getState().isBorder())
-				clickZeroField(fieldC[x+1][y]);
+				fieldsOpened += clickZeroField(fieldC[x+1][y]);
 			if(!fieldC[x-1][y+1].getState().isBorder())
-				clickZeroField(fieldC[x-1][y+1]);
+				fieldsOpened += clickZeroField(fieldC[x-1][y+1]);
 			if(!fieldC[x][y+1].getState().isBorder())
-				clickZeroField(fieldC[x][y+1]);
+				fieldsOpened += clickZeroField(fieldC[x][y+1]);
 			if(!fieldC[x+1][y+1].getState().isBorder())
-				clickZeroField(fieldC[x+1][y+1]);
+				fieldsOpened += clickZeroField(fieldC[x+1][y+1]);
 		} else{
 			fieldC[x-1][y-1].unPress();
 			fieldC[x][y-1].unPress();
@@ -152,7 +153,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 		}
 		
 		middleClicked = null;
-		
+		return fieldsOpened;
 	}
 
 	
@@ -252,13 +253,14 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 	}
 	
 
-	private void clickZeroField(FieldControl field){
+	private int clickZeroField(FieldControl field){
 		List<FieldControl> neighbors = new ArrayList<FieldControl>();
 		
 		neighbors.add(field);
 		int x = field.getX()+1;
 		int y = field.getY()+1;
-		field.fullPress(true);
+		
+		int fieldsOpened = field.fullPress(true) ? 1 :0;
 		
 		//TODO optimize this
 		while(neighbors.size()>0){
@@ -270,49 +272,49 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 				y = curField.getY()+1;
 				//top left
 				if(!fieldC[x-1][y-1].getState().isPressed() && fieldC[x-1][y-1].getState().isNumber()){
-						fieldC[x-1][y-1].fullPress(true);
+						fieldsOpened += fieldC[x-1][y-1].fullPress(true) ? 1 : 0;
 						if(fieldC[x-1][y-1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x-1][y-1]);
 				}
 				//top
 				if(!fieldC[x][y-1].getState().isPressed() && fieldC[x][y-1].getState().isNumber()){
-						fieldC[x][y-1].fullPress(true);
+					fieldsOpened += fieldC[x][y-1].fullPress(true) ? 1 : 0;
 						if(fieldC[x][y-1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x][y-1]);
 				}
 				//top right
 				if(!fieldC[x+1][y-1].getState().isPressed() && fieldC[x+1][y-1].getState().isNumber()){
-						fieldC[x+1][y-1].fullPress(true);
+					fieldsOpened += fieldC[x+1][y-1].fullPress(true) ? 1 : 0;
 						if(fieldC[x+1][y-1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x+1][y-1]);
 				}
 				//left
 				if(!fieldC[x-1][y].getState().isPressed() && fieldC[x-1][y].getState().isNumber()){
-						fieldC[x-1][y].fullPress(true);
+					fieldsOpened += fieldC[x-1][y].fullPress(true) ? 1 : 0;
 						if(fieldC[x-1][y].getNum().ordinal()==0)
 							neighbors.add(fieldC[x-1][y]);
 				}
 				//right
 				if(!fieldC[x+1][y].getState().isPressed() && fieldC[x+1][y].getState().isNumber()){
-						fieldC[x+1][y].fullPress(true);
+					fieldsOpened += fieldC[x+1][y].fullPress(true) ? 1 : 0;
 						if(fieldC[x+1][y].getNum().ordinal()==0)
 							neighbors.add(fieldC[x+1][y]);
 				}
 				//bottom left
 				if(!fieldC[x-1][y+1].getState().isPressed() && fieldC[x-1][y+1].getState().isNumber()){
-						fieldC[x-1][y+1].fullPress(true);
+					fieldsOpened += fieldC[x-1][y+1].fullPress(true) ? 1 : 0;
 						if(fieldC[x-1][y+1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x-1][y+1]);
 				}
 				//bottom 
 				if(!fieldC[x][y+1].getState().isPressed() && fieldC[x][y+1].getState().isNumber()){
-						fieldC[x][y+1].fullPress(true);
+					fieldsOpened += fieldC[x][y+1].fullPress(true) ? 1 : 0;
 						if(fieldC[x][y+1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x][y+1]);
 				}
 				//bottom right
 				if(!fieldC[x+1][y+1].getState().isPressed() && fieldC[x+1][y+1].getState().isNumber()){
-						fieldC[x+1][y+1].fullPress(true);
+					fieldsOpened += fieldC[x+1][y+1].fullPress(true) ? 1 : 0;
 						if(fieldC[x+1][y+1].getNum().ordinal()==0)
 							neighbors.add(fieldC[x+1][y+1]);
 				}
@@ -320,6 +322,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 				
 			}				
 		}
+		return fieldsOpened;
 	}
 	
 	public void setMineCount(int mines){
@@ -448,7 +451,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 	@Override
 	public void mousePressed(MouseEvent e) {
 		Point fieldCo = pixelToFieldCoor(e.getX() ,e.getY());
-		if(!fieldState.lost && checkIndices(fieldCo.x,fieldCo.y)){
+		if(!fieldState.won && !fieldState.lost && checkIndices(fieldCo.x,fieldCo.y)){
 			FieldControl field = fieldC[fieldCo.x][fieldCo.y];
 			
 			//Left click
@@ -486,19 +489,25 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 //						System.out.println("new field generated");
 					}
 					
-					field.fullPress(true);
+					fieldState.openedFieldCount += field.fullPress(true) ? 1 : 0;
 					fieldState.started = true;
 					
 					halfPressed = null;
+					int zeroClickedCount = 0;
 					//open all neighbor fields that are zero. stop at fields that are numbers.
 					if(field.getNum().ordinal()==0)
-						clickZeroField(field);
+						zeroClickedCount = clickZeroField(field);
+					System.out.println("zeroClicked: " +zeroClickedCount);
+					fieldState.openedFieldCount += zeroClickedCount;
+					
 					
 				}
 
 				if(middleClicked!=null){
-					middleReleaseOnField(field);
+					fieldState.openedFieldCount += middleReleaseOnField(field);
 				}
+				System.out.println(fieldState.openedFieldCount);
+				if(fieldState.isWon()) gameWon();
 			}
 			
 	}
@@ -511,6 +520,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 		private boolean won;
 		private int flagCount;
 		private int flagCountInit;
+		private int openedFieldCount;
 		
 		public MineFieldState(int flagCount){
 			flagCountInit = flagCount;
@@ -523,6 +533,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 			this.won = false;		
 			this.started = false;
 			this.flagCount = flagCountInit;
+			this.openedFieldCount = 0;
 		}
 		
 		public int getFlagCount(){
@@ -538,6 +549,7 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 			return lost;
 		}
 		public boolean isWon(){
+			won = openedFieldCount == fieldHeight*fieldWidth-mines;
 			return won;
 		}
 	}
@@ -671,9 +683,10 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 				}			
 				
 				if(!exception){
-					reset();
+					
 					setMineCount(mines);
 					setDimensions(width, height);
+					reset();
 	//				System.out.println("draw new field");
 					f.pack();
 				}
@@ -713,7 +726,15 @@ public class MineFieldControl extends Observable implements MouseListener,MouseM
 		JOptionPane.showMessageDialog(f, "Game Over");
 	}
 		
-	
+	public void gameWon(){
+		long time = timer.stopTimer();
+		long min = time/60000;
+		long sec = (time/1000)%60;
+		long ms = time%1000;
+		String msg = String.format("Game Won\n Time: %02d:%02d::%03d",min,sec,ms);
+		//TODO add highscore table and make this Dialog better looking
+				JOptionPane.showMessageDialog(f, msg);
+	}
 	
 	
 }

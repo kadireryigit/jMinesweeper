@@ -25,24 +25,16 @@ public class TimerDrawer extends Observable implements Observer {
 		long milli = timer.getTimeInMillis();
 		int sec,min,hou;
 		sec = (int) (milli/1000%60);
-		min = (int) (milli/60000%60);
-		hou = (int) (milli/3600000%24);
-		String s,m,h;
-		if(sec<10)
-			s = "0"+sec;
-		else s = ""+sec;
-		if(min<10)
-			m = "0"+min;
-		else m = ""+min;
-		if(hou<10)
-			h = "0"+hou;
-		else h = ""+hou;
+		min = (int) (milli/60000);
+		
+		
 //		System.out.println("Time: " + hou+ ":"+min + ":"+sec);
+		String timeMsg = String.format("Time: %02d:%02d", min,sec);
 		g2.setColor(Color.white);
 		g2.fillRect(x, y-20, 120, 20);
 		g2.setColor(Color.black);
 //		g2.setFont(new Font("Arial",Font.BOLD,16));
-		g2.drawString("Time: " + h+ ":"+m + ":"+s, x, y);
+		g2.drawString(timeMsg,x,y);
 		//TODO add time picture instead of text
 	}
 

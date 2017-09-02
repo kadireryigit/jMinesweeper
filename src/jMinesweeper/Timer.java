@@ -77,13 +77,15 @@ public class Timer extends Observable implements Runnable{
 		
 	}
 	
-	public void stopTimer(){
+	public long stopTimer(){
 		
 		if(this.run){
 //			System.out.println("Timer stopped");
 			this.run = false;
 			TimerThread.interrupt();
+			return System.currentTimeMillis() - timeZero;
 		}
+		return 0;
 	}
 	
 	public void reset(){

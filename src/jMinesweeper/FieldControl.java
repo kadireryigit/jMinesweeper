@@ -41,6 +41,7 @@ public class FieldControl extends Observable{
 	
 	public void setBorder(){
 		state.isBorder = true;
+		state.isFullPressed = true;
 	}
 	public void setFlag(){
 //		this.num = Number.FLAG;
@@ -105,8 +106,9 @@ public class FieldControl extends Observable{
 			state.qMarkSet = false;
 			this.setChanged();
 			this.notifyObservers();
+			return true;
 		}
-		return !state.flagSet && !state.isFullPressed;
+		return false;
 	}
 	
 	public boolean halfPress(){
@@ -120,13 +122,14 @@ public class FieldControl extends Observable{
 	}
 	
 	public boolean unPress(){
-		if(!state.isFullPressed){
+		if(!state.isFullPressed && state.isHalfPressed){
 			state.isFullPressed = false;
 			state.isHalfPressed = false;
 			this.setChanged();
 			this.notifyObservers();
+			return true;
 		}
-		return !state.isFullPressed;
+		return false;
 	}
 	
 	public void hoverOn(){
