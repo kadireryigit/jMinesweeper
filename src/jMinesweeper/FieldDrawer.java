@@ -156,7 +156,7 @@ public class FieldDrawer extends Observable implements Observer{
 		}
 		
 		
-			
+			//TODO Draw mines and flags when game is won but don't show them as exploded
 		if(fieldState.isExploded())
 			drawExplodedField(false);
 		if(fieldState.numVisible()){
